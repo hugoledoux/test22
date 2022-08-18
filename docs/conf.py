@@ -35,7 +35,6 @@ with open("../Cargo.toml") as fp:
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx_multiversion',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
