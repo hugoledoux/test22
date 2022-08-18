@@ -1,0 +1,2 @@
+sphinx-celery==2.0.0
+sphinx-multiversion==0.2.4
