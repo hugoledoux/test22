@@ -1,0 +1,18 @@
+name: Build docs
+
+on:
+  push:
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install GDAL
+      run: |
+        add-apt-repository -y ppa:ubuntugis/ppa
+        apt update
+        apt install gdal-bin python-gdal python3-gdal
+    - uses: actions/checkout@v2
+
+
