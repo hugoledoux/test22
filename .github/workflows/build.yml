@@ -21,9 +21,10 @@ jobs:
     - uses: syphar/restore-virtualenv@v1
       id: myvenv
 
-    - run: |
-      pip install sphinx-multiversion
-      pip install sphinx-celery    
+    - name: Test
+      run: |
+        pip install sphinx-multiversion
+        pip install sphinx-celery    
     
     - uses: actions/checkout@v2
     - uses: messense/maturin-action@v1
