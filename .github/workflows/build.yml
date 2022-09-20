@@ -8,11 +8,9 @@ on:
 
 jobs:
 
-  macos:
+
+  macos-p39:
     runs-on: macos-latest
-    strategy:
-      matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10']
     steps:
     - uses: actions/checkout@v2
     - name: Install aarch64-apple-darwin toolchain
@@ -24,17 +22,16 @@ jobs:
       with:
         maturin-version: latest
         command: build
-        args: --release --sdist --universal2
+        args: --release --sdist -i python3.9
 
-  windows:
+
+  win-p39:
     runs-on: windows-latest
-    strategy:
-      matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10']
     steps:
     - uses: actions/checkout@v2
     - uses: messense/maturin-action@v1
       with:
         maturin-version: latest
         command: build
-        args: --release --sdist        
+        args: --release --sdist -i python3.9
+
