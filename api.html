@@ -1,0 +1,689 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>API documentation &#8212; startinpy 0.9.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/celery.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">startinpy 0.9.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">API documentation</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="api-documentation">
+<h1>API documentation<a class="headerlink" href="#api-documentation" title="Permalink to this heading">¶</a></h1>
+<p>startinpy does not have specific classes and/or objects for points, vertices, and triangles.
+<a class="reference external" href="https://numpy.org/doc/stable/reference/arrays.html">NumPy arrays</a> of floats and integers are used.</p>
+<p>A <strong>Point</strong> is an array of 3 floats (x-coordinate, y-coordinate, z-coordinate):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">startinpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span> <span class="o">=</span> <span class="n">startinpy</span><span class="o">.</span><span class="n">DT</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">insert_one_pt</span><span class="p">(</span><span class="mf">11.3</span><span class="p">,</span> <span class="mf">22.2</span><span class="p">,</span> <span class="mf">4.7</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">array([11.3, 22.2, 4.7])</span>
+</pre></div>
+</div>
+<p>A <strong>Vertex</strong> is an integer, it is the index in the array of points (<a class="reference internal" href="#startinpy.DT.points" title="startinpy.DT.points"><code class="xref py py-func docutils literal notranslate"><span class="pre">startinpy.DT.points()</span></code></a>, which is 0-based).</p>
+<p>A <strong>Triangle</strong> is an array of 3 integer, the values of the indices of the 3 vertices (ordered counter-clockwise) in the array of points (<a class="reference internal" href="#startinpy.DT.points" title="startinpy.DT.points"><code class="xref py py-func docutils literal notranslate"><span class="pre">startinpy.DT.points()</span></code></a>, which is 0-based).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">triangles</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="go">array([1, 3, 2], dtype=uint64)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#-- z-coordinate of 3rd vertex of the same triangle</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">triangles</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">]][</span><span class="mi">2</span><span class="p">]</span>
+<span class="go">3.3</span>
+</pre></div>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The first vertex in the list of points is the <strong>infinite vertex</strong>, and has no coordinates (it has this: [-99999.99999, -99999.99999, -99999.99999]). It is used internally to ensure that the whole DT is consistent. No Triangle refers to the vertex.</p>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="startinpy.DT">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">startinpy.</span></span><span class="sig-name descname"><span class="pre">DT</span></span><a class="headerlink" href="#startinpy.DT" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Delaunay triangulation (DT), containing vertices+triangles</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.adjacent_vertices_to_vertex">
+<span class="sig-name descname"><span class="pre">adjacent_vertices_to_vertex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.adjacent_vertices_to_vertex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an array of vertex indices that are adjacent to vertex <em>vi</em>,
+that is those on the edges incident to <em>vi</em>.
+An exception is thrown if <em>vi</em> does not exist in the DT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vi</strong> – the vertex index</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>an array of vertex indices (ordered counter-clockwise)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.closest_point">
+<span class="sig-name descname"><span class="pre">closest_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.closest_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the closest vertex index to [x, y] (distance in 2D).
+An Exception is thrown if [x, y] is outside the convex hull.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – the x-coordinate</p></li>
+<li><p><strong>y</strong> – the y-coordinate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the vertex index of the closest point</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.convex_hull">
+<span class="sig-name descname"><span class="pre">convex_hull</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.convex_hull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the convex hull as an array of vertex indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>an array of vertex indices, oriented counter-clockwise (CCW)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.get_bbox">
+<span class="sig-name descname"><span class="pre">get_bbox</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.get_bbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the bbox of the dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>an array of 4 coordinates: [minx, miny, maxx, maxy]</p>
+</dd>
+<dt class="field-even">Example<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bbox</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">()</span>
+<span class="go">[ 505043.690 5258283.953  523361.172 5275100.003 ]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.get_point">
+<span class="sig-name descname"><span class="pre">get_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.get_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the point for the vertex with index <em>vi</em>.
+An exception is thrown if vertex index is invalid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vi</strong> – the index of the vertex</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the point</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">get_point</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">[13.0, 2.0, 11.11]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.incident_triangles_to_vertex">
+<span class="sig-name descname"><span class="pre">incident_triangles_to_vertex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.incident_triangles_to_vertex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the triangles incident to vertex <em>vi</em>.
+Exception thrown if vertex index doesn’t exist in the DT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vi</strong> – the vertex index</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>an array of triangles (ordered counter-clockwise)</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tri</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">incident_triangles_to_vertex</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tri</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>    
+<span class="go">0 [3, 4, 6]</span>
+<span class="go">1 [3, 6, 7]</span>
+<span class="go">2 [3, 7, 8]</span>
+<span class="go">3 [3, 8, 2]</span>
+<span class="go">4 [3, 2, 9]</span>
+<span class="go">5 [3, 9, 4]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.insert">
+<span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert each point in the array of points (a 2D array) by calling insert_one_pt() for each.
+Different insertion strategies can be used: “AsIs” (inserts points in the order given) or
+“BBox” (inserts first the BBox of the points, which speeds up the construction,
+works especially good for rasters).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pts</strong> – an array of points (which is an array)</p></li>
+<li><p><strong>insertionstrategy</strong> – (optional) “AsIs” or “BBox”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(nothing)</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pts</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pts</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">11.11</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pts</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.3</span><span class="p">,</span> <span class="mf">22.22</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pts</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mf">12.3</span><span class="p">,</span> <span class="mf">21.0</span><span class="p">,</span> <span class="mf">4.52</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span> <span class="o">=</span> <span class="n">startinpy</span><span class="o">.</span><span class="n">DT</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span>
+<span class="go">OR</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">pts</span><span class="p">,</span> <span class="n">insertionstrategy</span><span class="o">=</span><span class="s2">&quot;BBox&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.insert_one_pt">
+<span class="sig-name descname"><span class="pre">insert_one_pt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.insert_one_pt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert one new point in the DT.
+If there is a point at the same location (based on <a class="reference internal" href="#startinpy.DT.snap_tolerance" title="startinpy.DT.snap_tolerance"><code class="xref py py-func docutils literal notranslate"><span class="pre">startinpy.DT.snap_tolerance()</span></code></a>),
+then the point is not inserted and the index of the already existing vertex is returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – x-coordinate of point to insert</p></li>
+<li><p><strong>y</strong> – y-coordinate of point to insert</p></li>
+<li><p><strong>z</strong> – z-coordinate of point to insert</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>index of the vertex in the DT</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">insert_one_pt</span><span class="p">(</span><span class="mf">3.2</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">17.0</span><span class="p">)</span>
+<span class="go">5</span>
+<span class="go">(the vertex index in the DT is 5)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.interpolate_laplace">
+<span class="sig-name descname"><span class="pre">interpolate_laplace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.interpolate_laplace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolation method: Laplace interpolation (<a class="reference external" href="http://dilbert.engr.ucdavis.edu/~suku/nem/index.html">details about the method</a>).
+This is a variation of natural interpolation method with distances used instead of stolen areas.
+Thus faster in practice.
+An Exception is thrown if [x, y] is outside the convex hull.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – the x-coordinate</p></li>
+<li><p><strong>y</strong> – the y-coordinate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the estimated value</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">zhat</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">interpolate_laplace</span><span class="p">(</span><span class="mf">55.2</span><span class="p">,</span> <span class="mf">33.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;result: &quot;</span><span class="p">,</span> <span class="n">zhat</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="go">64.08234343</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.interpolate_nn">
+<span class="sig-name descname"><span class="pre">interpolate_nn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.interpolate_nn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolation method: nearest neighbour (or closest neighbour).
+An Exception is thrown if [x, y] is outside the convex hull.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – the x-coordinate</p></li>
+<li><p><strong>y</strong> – the y-coordinate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the estimated value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.interpolate_nni">
+<span class="sig-name descname"><span class="pre">interpolate_nni</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.interpolate_nni" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolation method: natural neighbour method (also called Sibson’s method).
+An Exception is thrown if [x, y] is outside the convex hull.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – the x-coordinate</p></li>
+<li><p><strong>y</strong> – the y-coordinate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the estimated value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.interpolate_tin_linear">
+<span class="sig-name descname"><span class="pre">interpolate_tin_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.interpolate_tin_linear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolation method: linear interpolation in TIN.
+An Exception is thrown if [x, y] is outside the convex hull.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – the x-coordinate</p></li>
+<li><p><strong>y</strong> – the y-coordinate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the estimated value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.is_inside_convex_hull">
+<span class="sig-name descname"><span class="pre">is_inside_convex_hull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.is_inside_convex_hull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the point [x, y] located inside the convex hull of the DT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – the x-coordinate</p></li>
+<li><p><strong>y</strong> – the y-coordinate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if [x,y] is inside the convex hull or on its boundary, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.is_triangle">
+<span class="sig-name descname"><span class="pre">is_triangle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.is_triangle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify if a triangle exists in the DT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – the triangle, an array of 3 vertex indices</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if t exists, False otherwise.</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">re</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">is_triangle</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">11</span><span class="p">,</span> <span class="mi">162</span><span class="p">,</span> <span class="mi">666</span><span class="p">])))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.is_vertex_convex_hull">
+<span class="sig-name descname"><span class="pre">is_vertex_convex_hull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.is_vertex_convex_hull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if vertex <em>vi</em> is on the boundary of the convex hull, False otherwise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vi</strong> – the vertex index</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if <em>vi</em> is on the boundary of the convex hull, False otherwise.
+Also False is returned if the vertex doesn’t exist in the DT.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.locate">
+<span class="sig-name descname"><span class="pre">locate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.locate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Locate the triangle containing the point [x, y] (projected to 2D).
+An error is thrown if it is outside the convex hull.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – the x-coordinate</p></li>
+<li><p><strong>y</strong> – the y-coordinate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the triangle.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.number_of_triangles">
+<span class="sig-name descname"><span class="pre">number_of_triangles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.number_of_triangles" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>number of (finite) triangles</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.number_of_vertices">
+<span class="sig-name descname"><span class="pre">number_of_vertices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.number_of_vertices" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>number of (finite) vertices</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="startinpy.DT.points">
+<span class="sig-name descname"><span class="pre">points</span></span><a class="headerlink" href="#startinpy.DT.points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the points [x, y, z] of all vertices in the DT.
+This includes the infinite vertex (vertex at position 0), which is not part of the DT.
+It has dummy coordinates and no triangles refer to it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pts</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">points</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">pts</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="go">(102, 3) #-- this is a numpy array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pts</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">27</span><span class="p">]</span>
+<span class="go">[101.122 72.293 11.223]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">[-99999.99999 -99999.99999 -99999.99999]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.read_geotiff">
+<span class="sig-name descname"><span class="pre">read_geotiff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.read_geotiff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the GeoTIFF file and insert all the points in the DT.
+(no_data are skipped)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – full path (a string) on disk of the file to read</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>throws an exception if the path is invalid</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span> <span class="o">=</span> <span class="n">startinpy</span><span class="o">.</span><span class="n">DT</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">read_geotiff</span><span class="p">(</span><span class="s2">&quot;/home/elvis/myfile.tif&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;# triangles:&quot;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">number_of_triangles</span><span class="p">())</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.read_las">
+<span class="sig-name descname"><span class="pre">read_las</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.read_las" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the LAS/LAZ file and insert all the points in the DT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – full path (a string) on disk of the file to read</p></li>
+<li><p><strong>classification</strong> – (optional) a list of class(es) to keep. If not used then all points are inserted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>throws an exception if the path is invalid</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span> <span class="o">=</span> <span class="n">startinpy</span><span class="o">.</span><span class="n">DT</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">read_las</span><span class="p">(</span><span class="s2">&quot;/home/elvis/myfile.laz&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">OR</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">read_las</span><span class="p">(</span><span class="s2">&quot;/home/elvis/myfile.laz&quot;</span><span class="p">,</span> <span class="n">classification</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.remove">
+<span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove/delete the vertex vi (an index) from the DT, and update the DT for the Delaunay criterion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vi</strong> – index of vertex to delete</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(Exception is thrown if <em>vi</em> is invalid)</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">t</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="mi">45</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="startinpy.DT.snap_tolerance">
+<span class="sig-name descname"><span class="pre">snap_tolerance</span></span><a class="headerlink" href="#startinpy.DT.snap_tolerance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get/set the snap tolerance used to merge vertices during insertion.
+Two vertices closer than this will be the merged during insertion.
+(default=0.001)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span> <span class="o">=</span> <span class="n">startinpy</span><span class="o">.</span><span class="n">DT</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">snap_tolerance</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="c1">#-- modify to 0.05unit</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The snap tolerance is:&quot;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">snap_tolerance</span><span class="p">)</span>
+<span class="go">The snap tolerance is: 0.05</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="startinpy.DT.triangles">
+<span class="sig-name descname"><span class="pre">triangles</span></span><a class="headerlink" href="#startinpy.DT.triangles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the triangles in the DT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">trs</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">triangles</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">trs</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="go">(224, 3) #-- this is a numpy array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">one_triangle</span> <span class="o">=</span> <span class="n">trs</span><span class="p">[</span><span class="mi">22</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">first_vertex</span> <span class="o">=</span> <span class="n">one_triangle</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x-coordinate of first vertex: &quot;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="n">first_vertex</span><span class="p">])</span>
+<span class="go">x-coordinate of first vertex: [25.98 35.12 4.78]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.vertical_exaggeration">
+<span class="sig-name descname"><span class="pre">vertical_exaggeration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">factor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.vertical_exaggeration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Vertically exaggerate the elevation values of the vertices.
+Used mostly for visualisation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>factor</strong> – a positive value (can be &lt;1.0 to remove exaggeration)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(nothing)</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">vertical_exaggeration</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">vertical_exaggeration</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.write_geojson">
+<span class="sig-name descname"><span class="pre">write_geojson</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.write_geojson" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a GeoJSON file of the DT (vertices+triangles) to the path (a string).
+Throws an exception if the path is invalid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – full path (a string) on disk of the file to create (will overwrite)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(nothing)</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">write_obj</span><span class="p">(</span><span class="s2">&quot;/home/elvis/myfile.geojson&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.write_obj">
+<span class="sig-name descname"><span class="pre">write_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.write_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write an OBJ of the DT to the path (a string).
+Throws an exception if the path is invalid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – full path (a string) on disk of the file to create (will overwrite)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(nothing)</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">write_obj</span><span class="p">(</span><span class="s2">&quot;/home/elvis/myfile.obj&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="startinpy.DT.write_ply">
+<span class="sig-name descname"><span class="pre">write_ply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#startinpy.DT.write_ply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write an PLY of the DT to the path (a string).
+Throws an exception if the path is invalid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – full path (a string) on disk of the file to create (will overwrite)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(nothing)</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">write_ply</span><span class="p">(</span><span class="s2">&quot;/home/elvis/myfile.ply&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="howitworks.html">How startinpy works</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/api.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">startinpy 0.9.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">API documentation</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, Hugo Ledoux.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+    </div>
+  </body>
+</html>

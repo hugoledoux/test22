@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>How startinpy works &#8212; startinpy 0.9.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/celery.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Examples" href="examples.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">startinpy 0.9.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">How startinpy works</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="how-startinpy-works">
+<h1>How startinpy works<a class="headerlink" href="#how-startinpy-works" title="Permalink to this heading">¶</a></h1>
+<p>startinpy source code in written in <a class="reference external" href="https://www.rust-lang.org/">Rust</a> (called just ‘startin’, <a class="reference external" href="https://github.com/hugoledoux/startin">original source code</a>).</p>
+<p>It uses an incremental algorithm for the construction of a Delaunay triangulation (constraints are <em>not</em> supported), that is each point are inserted one after another and triangulation is updated between each insertion.
+The algorithm is based on flips.</p>
+<p>The data structure is a cheap implementation of the star-based structure defined in <a class="reference external" href="https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.9.6823">Blandford et al. (2003)</a>, cheap because the link of each vertex is stored a simple array and not in an optimised blob like they did.
+It results in a pretty fast library (comparison will come at some point), but it uses more space than the optimised one.</p>
+<p>The deletion of a vertex is also possible.
+The algorithm implemented is a modification of the one of <a class="reference external" href="https://doi.org/10.1016/S0098-3004(03)00017-7">Mostafavi, Gold, and Dakowicz (2003)</a>.
+The ears are filled by flipping, so it’s in theory more robust.
+I have also extended the algorithm to allow the deletion of vertices on the boundary of the convex hull.
+The algorithm is sub-optimal, but in practice the number of neighbours of a given vertex in a DT is only 6, so it doesn’t really matter.</p>
+<p>Robust arithmetic for the geometric predicates are used (<a class="reference external" href="https://www.cs.cmu.edu/~quake/robust.html">Shewchuk’s predicates</a>, well the <a class="reference external" href="https://crates.io/crates/robust">Rust port of the code</a>), so startin/py is robust and shouldn’t crash (touch wood).</p>
+<p>The implementation of startinpy uses the idea of <em>infinite triangles</em> and of <em>infinite vertex</em>, this simplifies a lot the algorithm and ensures that one can insert new points outside the convex hull of a dataset (or even delete some vertices on the boundary of the convex hull).
+The CGAL library also does this, and <a class="reference external" href="https://doc.cgal.org/latest/Triangulation_2/classCGAL_1_1Triangulation__2.html">it is well explained here</a>.
+This is why the set of points (<a class="reference internal" href="api.html#startinpy.DT.points" title="startinpy.DT.points"><code class="xref py py-func docutils literal notranslate"><span class="pre">startinpy.DT.points()</span></code></a>) has its first vertex as the <em>infinity vertex</em>.</p>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How startinpy works</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/howitworks.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">startinpy 0.9.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">How startinpy works</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, Hugo Ledoux.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+    </div>
+  </body>
+</html>
