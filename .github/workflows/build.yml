@@ -12,6 +12,9 @@ jobs:
   macos-p39:
     runs-on: macos-latest
     steps:
+    - name: Install GDAL
+      run: |
+        brew install gdal 
     - uses: actions/checkout@v2
     - name: Install aarch64-apple-darwin toolchain
       uses: actions-rs/toolchain@v1
@@ -25,13 +28,13 @@ jobs:
         args: --release --sdist -i python3.9
 
 
-  win-p39:
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: messense/maturin-action@v1
-      with:
-        maturin-version: latest
-        command: build
-        args: --release --sdist -i python3.9
+  # win-p39:
+  #   runs-on: windows-latest
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - uses: messense/maturin-action@v1
+  #     with:
+  #       maturin-version: latest
+  #       command: build
+  #       args: --release --sdist -i python3.9
 
